@@ -1,0 +1,18 @@
+**/*.meta
+**/*.unitypackage
+**/*.asset
+**/*.fbx
+.vscode
+
+# Игнорировать все в папке Assets,
+# за исключением подпапок с меткой инвертированного правила (метка !)
+Assets/*
+!Assets/Scripts/
+!Assets/Scenes/
+
+# Игронрировать эти папки полностью
+Logs/
+Library/
+Packages/
+Temp/
+obj/
