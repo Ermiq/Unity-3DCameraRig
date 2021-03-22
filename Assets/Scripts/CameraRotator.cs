@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Numb.ActionCamera
+namespace ActionCamera
 {
 	public class CameraRotator
 	{
@@ -58,7 +58,8 @@ namespace Numb.ActionCamera
 		{
 			if (camManager.camMain.transform.localRotation != Quaternion.identity)
 				camManager.camMain.transform.localRotation = Quaternion.Slerp(
-					camManager.camMain.transform.localRotation, Quaternion.identity, Time.deltaTime);
+					camManager.camMain.transform.localRotation, Quaternion.identity, 1f - Mathf.Pow(0.001f, Time.deltaTime));
+		});
 		}
 
 		Quaternion ClampRotationAroundXAxis(Quaternion q)
