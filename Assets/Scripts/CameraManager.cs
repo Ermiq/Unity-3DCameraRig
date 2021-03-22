@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Numb.ActionCamera {
+namespace ActionCamera {
 
 	/// <summary>
-	/// Is designed for the camera construct that is made as following:
-	/// <CamRotationPivotH> gameObject is a root game object, and it considered to rotate around it's Y axis only (and its rotation is in World space).
-	/// <CamRotationPivotV> is a child of the <CamRotationPivotH>, it rotates around its X axis only (its rotation is in Local space).
-	/// <Camera> component is attached to the game object that is a child of the <CamRotationPivotV>. It could be rotated anyhow depending on different effects and states of the player.
+	/// Is designed for the camera rig that is made as following:
+	/// <CamRotationPivotH> gameObject is a root game object, and it's considered to rotate around it's Y axis in World space.
+	/// <CamRotationPivotV> is a child of the <CamRotationPivotH>, it rotates around its X axis in Local space.
+	/// <Camera> component is attached to a game object that is a child of the <CamRotationPivotV>. It could be rotated anyhow
+	///	depending on different effects and states of the player (recoil, head bob, sprint shake).
 	/// </summary>
-	public class CameraManager : MonoBehaviour {
-
-		[Header ("Example fields")]
-		private bool CameraEnabled;
+	public class CameraManager : MonoBehaviour
+	{
 		public KeyCode PauseButton = KeyCode.Escape;
 
 		public Transform player;
@@ -28,8 +27,8 @@ namespace Numb.ActionCamera {
 		private float targetFOV = 90f;
 
 		public bool ClampVerticalRotation = true;
-		public float MinimumX = -80F;
-		public float MaximumX = 90F;
+		public float MinimumX = -80f;
+		public float MaximumX = 90f;
 
 		public bool smooth = true;
 		public float smoothTime = 60f;
@@ -37,14 +36,16 @@ namespace Numb.ActionCamera {
 		[Range (0.1f, 10f)] public float XSensitivity = 6f;
 		[Range (0.1f, 10f)] public float YSensitivity = 6f;
 
+		private bool CameraEnabled;
+		
 		private CameraRotator cameraRotator;
 		private CameraMover cameraMover;
 		
 		private float inputMouseX;
 		private float inputMouseY;
 
-		void Awake () {
-			CameraEnabled = false;
+		void Awake ()
+		{
 			ToggleCursorLock ();
 
 			CamRotationPivotH = GameObject.Find ("CamRotationPivotH").transform;
@@ -52,42 +53,45 @@ namespace Numb.ActionCamera {
 			camMain = GameObject.Find ("Camera").transform.GetComponent<Camera> ();
 		}
 
-		void Start () {
-
+		void Start ()
+		{
 			cameraMover = new CameraMover (this);
 			cameraRotator = new CameraRotator (this);
 		}
 
-		public bool SwitchCameraMode () {
+		public bool SwitchCameraMode ()
+		{
 			bIsFPSCameraModeActive = !bIsFPSCameraModeActive;
 			return bIsFPSCameraModeActive;
 		}
 
-		void ToggleCursorLock () {
+		void ToggleCursorLock ()
+		{
 			CameraEnabled = !CameraEnabled;
 			Cursor.lockState = CameraEnabled ? CursorLockMode.Locked : CursorLockMode.None;
 			Cursor.visible = !CameraEnabled;
 		}
 
-		void Update () {
+		void Update ()
+		{
 			if (Input.GetKeyUp (PauseButton))
 				ToggleCursorLock ();
+			
+			if (Input.GetKeyUp (KeyCode.U))
+				smooth = !smooth;
 
 			if (!CameraEnabled)
 				return;
 
 			if (camMain.fieldOfView != targetFOV)
-				camMain.fieldOfView = Mathf.Lerp (camMain.fieldOfView, targetFOV, 1 - Mathf.Pow (0.01f, Time.deltaTime));
-
-			inputMouseX = Input.GetAxisRaw ("Mouse X") * XSensitivity;
-			inputMouseY = Input.GetAxisRaw ("Mouse Y") * YSensitivity;
+				camMain.fieldOfView = Mathf.Lerp (camMain.fieldOfView, targetFOV, 1f - Mathf.Pow (0.01f, Time.deltaTime));
 
 			cameraMover.UpdateCameraPosition ();
 			cameraMover.AdjustCameraPosition ();
+			
+			inputMouseX = Input.GetAxisRaw ("Mouse X") * XSensitivity;
+			inputMouseY = Input.GetAxisRaw ("Mouse Y") * YSensitivity;
 			cameraRotator.UpdateRotation (inputMouseX, inputMouseY);
-
-			if (Input.GetKey (KeyCode.U))
-				smooth = !smooth;
 		}
 	}
 }
