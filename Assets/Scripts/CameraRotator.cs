@@ -20,9 +20,9 @@ namespace ActionCamera
 			this.camManager = manager;
 		}
 
-		public static float SmoothDelay(float source, float target, float delay, float dt)
+		public static float SmoothDelay(float current, float target, float delay = 0.001f, float dt = Time.deltaTime)
 		{
-			return Mathf.Lerp(source, target, 1 - Mathf.Pow(delay, dt));
+			return Mathf.Lerp(current, target, 1f - Mathf.Pow(delay, dt));
 		}
 
 		public void UpdateRotation(float inputMouseX, float inputMouseY)
@@ -59,7 +59,6 @@ namespace ActionCamera
 			if (camManager.camMain.transform.localRotation != Quaternion.identity)
 				camManager.camMain.transform.localRotation = Quaternion.Slerp(
 					camManager.camMain.transform.localRotation, Quaternion.identity, 1f - Mathf.Pow(0.001f, Time.deltaTime));
-		});
 		}
 
 		Quaternion ClampRotationAroundXAxis(Quaternion q)
