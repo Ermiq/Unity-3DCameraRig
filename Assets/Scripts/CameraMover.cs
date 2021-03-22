@@ -3,21 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Numb.ActionCamera
+namespace ActionCamera
 {
-	/// <summary>
-	/// Switching FPS/TPS modes, aiming down sights mode, keeps camera at the position in front of character's head, etc.
-	/// </summary>
-	/// <code>
-	/// new CameraMover (CameraManager manager)
-	/// </code>
 	[Serializable]
 	public class CameraMover
 	{
 		CameraManager camManager;
 
 		Vector3 cameraLocalPosition;
-		Vector3 cameraPivotPositionRaw;
 		Vector3 cameraPivotPosition;
 		Vector3 vDirectionFromCameraToPivot;
 		// Avoiding obstacles in 3rd person mode
@@ -25,8 +18,8 @@ namespace Numb.ActionCamera
 		RaycastHit obstaclesHitInfo;
 
 		// For 3rd person mode
-		public float defaultHorizontalOffset = 0f;
-		public float maxDistanceFromCamera = 4f;
+		public float shoulderOffset = 0f;
+		public float maxDistanceFromCamera = 6f;
 		
 		public CameraMover(CameraManager manager)
 		{
@@ -34,7 +27,7 @@ namespace Numb.ActionCamera
 		}
 
 		/// <summary>
-		/// Updates camera prefered position (for FPS mode, 3rd person mode and for aiming down sights).
+		/// Updates camera prefered position (for FPS mode, 3rd person mode).
 		/// </summary>
 		public void UpdateCameraPosition()
 		{
@@ -45,7 +38,7 @@ namespace Numb.ActionCamera
 			else
 			{
 				UpdateDistanceToObstacles(maxDistanceFromCamera);
-				cameraLocalPosition.Set(defaultHorizontalOffset, 0f, -distanceToObstacles);
+				cameraLocalPosition.Set(shoulderOffset, 0f, -distanceToObstacles);
 			}
 		}
 
@@ -54,8 +47,7 @@ namespace Numb.ActionCamera
 		/// </summary>
 		public void AdjustCameraPosition()
 		{
-			cameraPivotPositionRaw = camManager.player.position + Vector3.up * camManager.playerHeight + camManager.player.forward * 0.2f;
-			cameraPivotPosition = cameraPivotPositionRaw;
+			cameraPivotPosition = camManager.player.position + Vector3.up * camManager.playerHeight;
 
 			camManager.CamRotationPivotH.position = cameraPivotPosition;
 			camManager.camMain.transform.localPosition = cameraLocalPosition;
@@ -67,10 +59,9 @@ namespace Numb.ActionCamera
 		private void UpdateDistanceToObstacles(float distance)
 		{
 			vDirectionFromCameraToPivot = camManager.camMain.transform.position - camManager.CamRotationPivotH.position;
-			Physics.Raycast(camManager.CamRotationPivotH.position, vDirectionFromCameraToPivot.normalized, out obstaclesHitInfo, distance,
-				Physics.AllLayers, QueryTriggerInteraction.Ignore);
+			Physics.Raycast(camManager.CamRotationPivotH.position, vDirectionFromCameraToPivot.normalized, out obstaclesHitInfo, distance);
 			if (obstaclesHitInfo.transform && obstaclesHitInfo.transform.root != camManager.player)
-				distanceToObstacles = Vector3.Distance(camManager.CamRotationPivotH.position, obstaclesHitInfo.point) - 0.1f;
+				distanceToObstacles = obstaclesHitInfo.distance - 0.1f;
 			else
 				distanceToObstacles = distance;
 		}
