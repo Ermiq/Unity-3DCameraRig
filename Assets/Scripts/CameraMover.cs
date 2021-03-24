@@ -1,44 +1,49 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActionCamera
 {
+	/// <summary>
+	/// Switching FPS/TPS modes, aiming down sights mode, keeps camera at the position in front of character's head, etc.
+	/// </summary>
+	/// <code>
+	/// new CameraMover (CameraManager manager)
+	/// </code>
 	[Serializable]
 	public class CameraMover
 	{
-		CameraManager camManager;
+		ActionCamera actionCamera;
 
 		Vector3 cameraLocalPosition;
-		Vector3 cameraPivotPosition;
 		Vector3 vDirectionFromCameraToPivot;
 		// Avoiding obstacles in 3rd person mode
 		float distanceToObstacles;
 		RaycastHit obstaclesHitInfo;
 
 		// For 3rd person mode
-		public float shoulderOffset = 0f;
-		public float maxDistanceFromCamera = 6f;
+		public float defaultHorizontalOffset = 0f;
+		public float maxDistanceFromCamera = 4f;
 		
-		public CameraMover(CameraManager manager)
+		public CameraMover(ActionCamera manager)
 		{
-			camManager = manager;
+			actionCamera = manager;
 		}
 
 		/// <summary>
-		/// Updates camera prefered position (for FPS mode, 3rd person mode).
+		/// Updates camera prefered position (for FPS mode, 3rd person mode and for aiming down sights).
 		/// </summary>
 		public void UpdateCameraPosition()
 		{
 			// 1st person position
-			if (camManager.bIsFPSCameraModeActive)
+			if (actionCamera.FPSMode)
 				cameraLocalPosition = Vector3.zero;
 			// 3rd person position
 			else
 			{
 				UpdateDistanceToObstacles(maxDistanceFromCamera);
-				cameraLocalPosition.Set(shoulderOffset, 0f, -distanceToObstacles);
+				cameraLocalPosition.Set(defaultHorizontalOffset, 0f, -distanceToObstacles);
 			}
 		}
 
@@ -47,10 +52,11 @@ namespace ActionCamera
 		/// </summary>
 		public void AdjustCameraPosition()
 		{
-			cameraPivotPosition = camManager.player.position + Vector3.up * camManager.playerHeight;
+			actionCamera.transform.position =
+				//actionCamera.SmoothDelay(actionCamera.transform.position, actionCamera.TargetToFollow.position, actionCamera.smoothDelay, Time.deltaTime);
+				actionCamera.TargetToFollow.position;
 
-			camManager.CamRotationPivotH.position = cameraPivotPosition;
-			camManager.camMain.transform.localPosition = cameraLocalPosition;
+			actionCamera.Cam.transform.localPosition = cameraLocalPosition;
 		}
 
 		///<summary>
@@ -58,10 +64,11 @@ namespace ActionCamera
 		///</summary>
 		private void UpdateDistanceToObstacles(float distance)
 		{
-			vDirectionFromCameraToPivot = camManager.camMain.transform.position - camManager.CamRotationPivotH.position;
-			Physics.Raycast(camManager.CamRotationPivotH.position, vDirectionFromCameraToPivot.normalized, out obstaclesHitInfo, distance);
-			if (obstaclesHitInfo.transform && obstaclesHitInfo.transform.root != camManager.player)
-				distanceToObstacles = obstaclesHitInfo.distance - 0.1f;
+			vDirectionFromCameraToPivot = actionCamera.Cam.transform.position - actionCamera.CamRotationPivotH.position;
+			Physics.Raycast(actionCamera.CamRotationPivotH.position, vDirectionFromCameraToPivot.normalized, out obstaclesHitInfo, distance,
+				Physics.AllLayers, QueryTriggerInteraction.Ignore);
+			if (obstaclesHitInfo.transform && obstaclesHitInfo.transform.root != actionCamera.transform)
+				distanceToObstacles = Vector3.Distance(actionCamera.CamRotationPivotH.position, obstaclesHitInfo.point) - 0.2f;
 			else
 				distanceToObstacles = distance;
 		}
