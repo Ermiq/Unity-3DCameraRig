@@ -2,15 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Is designed for the camera construct that is made as following:
+/// <CamRotationPivotH> gameObject is a child of root game object, and it considered to rotate around it's Y axis only (and its rotation is in World space).
+/// <CamRotationPivotV> is a child of the <CamRotationPivotH>, it rotates around its X axis only (its rotation is in Local space).
+/// <Camera> component is attached to the game object that is a child of the <CamRotationPivotV>. It could be rotated anyhow depending on different effects and states of the player.
+/// </summary>
+
+/// <summary>
+/// Attach this script to a GameObject and it will create the rig automagically on application start.
+/// </summary>
+
 namespace ActionCamera
 {
-
-	/// <summary>
-	/// Is designed for the camera construct that is made as following:
-	/// <CamRotationPivotH> gameObject is a root game object, and it considered to rotate around it's Y axis only (and its rotation is in World space).
-	/// <CamRotationPivotV> is a child of the <CamRotationPivotH>, it rotates around its X axis only (its rotation is in Local space).
-	/// <Camera> component is attached to the game object that is a child of the <CamRotationPivotV>. It could be rotated anyhow depending on different effects and states of the player.
-	/// </summary>
 	public class ActionCamera : MonoBehaviour
 	{
 		private bool CameraEnabled;
