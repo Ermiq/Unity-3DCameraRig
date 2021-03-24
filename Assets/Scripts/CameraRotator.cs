@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +7,7 @@ namespace ActionCamera
 {
 	public class CameraRotator
 	{
-		CameraManager camManager;
+		ActionCamera actionCamera;
 
 		Quaternion TargetRotationV;
 		Quaternion TargetRotationH;
@@ -15,25 +15,20 @@ namespace ActionCamera
 		float currentAngularSpeedV;
 		float currentAngularSpeedH;
 
-		public CameraRotator(CameraManager manager)
+		public CameraRotator(ActionCamera manager)
 		{
-			this.camManager = manager;
-		}
-
-		public static float SmoothDelay(float current, float target, float delay = 0.001f, float dt = Time.deltaTime)
-		{
-			return Mathf.Lerp(current, target, 1f - Mathf.Pow(delay, dt));
+			this.actionCamera = manager;
 		}
 
 		public void UpdateRotation(float inputMouseX, float inputMouseY)
 		{
-			TargetRotationV = camManager.CamRotationPivotV.localRotation;
-			TargetRotationH = camManager.CamRotationPivotH.rotation;
+			TargetRotationV = actionCamera.CamRotationPivotV.localRotation;
+			TargetRotationH = actionCamera.CamRotationPivotH.rotation;
 
-			if (camManager.smooth)
+			if (actionCamera.smooth)
 			{
-				currentAngularSpeedV = SmoothDelay(currentAngularSpeedV, inputMouseY, camManager.smoothDelay, Time.deltaTime);
-				currentAngularSpeedH = SmoothDelay(currentAngularSpeedH, inputMouseX, camManager.smoothDelay, Time.deltaTime);
+				currentAngularSpeedV = actionCamera.SmoothDelay(currentAngularSpeedV, inputMouseY, actionCamera.smoothDelay, Time.deltaTime);
+				currentAngularSpeedH = actionCamera.SmoothDelay(currentAngularSpeedH, inputMouseX, actionCamera.smoothDelay, Time.deltaTime);
 			}
 			else
 			{
@@ -44,11 +39,11 @@ namespace ActionCamera
 			TargetRotationV *= Quaternion.Euler(-currentAngularSpeedV, 0f, 0f);
 			TargetRotationH *= Quaternion.Euler(0f, currentAngularSpeedH, 0f);
 
-			if (camManager.ClampVerticalRotation)
+			if (actionCamera.ClampVerticalRotation)
 				TargetRotationV = ClampRotationAroundXAxis(TargetRotationV);
 
-			camManager.CamRotationPivotV.localRotation = TargetRotationV;
-			camManager.CamRotationPivotH.rotation = TargetRotationH;
+			actionCamera.CamRotationPivotV.localRotation = TargetRotationV;
+			actionCamera.CamRotationPivotH.rotation = TargetRotationH;
 		}
 
 		/// <summary>
@@ -56,9 +51,9 @@ namespace ActionCamera
 		/// </summary>
 		public void CenterCamera()
 		{
-			if (camManager.camMain.transform.localRotation != Quaternion.identity)
-				camManager.camMain.transform.localRotation = Quaternion.Slerp(
-					camManager.camMain.transform.localRotation, Quaternion.identity, 1f - Mathf.Pow(0.001f, Time.deltaTime));
+			if (actionCamera.Cam.transform.localRotation != Quaternion.identity)
+				actionCamera.Cam.transform.localRotation = Quaternion.Slerp(
+					actionCamera.Cam.transform.localRotation, Quaternion.identity, Time.deltaTime);
 		}
 
 		Quaternion ClampRotationAroundXAxis(Quaternion q)
@@ -69,7 +64,7 @@ namespace ActionCamera
 			q.w = 1.0f;
 
 			float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan(q.x);
-			angleX = Mathf.Clamp(angleX, camManager.MinimumX, camManager.MaximumX);
+			angleX = Mathf.Clamp(angleX, actionCamera.MinimumX, actionCamera.MaximumX);
 			q.x = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleX);
 
 			return q;
