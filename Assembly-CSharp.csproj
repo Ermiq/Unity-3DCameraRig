@@ -36,10 +36,9 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\CameraManager.cs" />
+     <Compile Include="Assets\Scripts\ActionCamera.cs" />
      <Compile Include="Assets\Scripts\CameraMover.cs" />
      <Compile Include="Assets\Scripts\CameraRotator.cs" />
-     <Compile Include="Assets\Scripts\CameraShootingRecoil.cs" />
     <Reference Include="UnityEngine">
         <HintPath>/home/alixey/Devel/Unity/Editors/2019.4.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
