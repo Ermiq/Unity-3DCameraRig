@@ -71,9 +71,9 @@ namespace ActionCamera
 		{
 			GameObject go = new GameObject();
 ;
-			GameObject pivotH = GameObject.Instantiate(go, new Vector3(0, Height, 0), Quaternion.identity, transform);
+			GameObject pivotH = GameObject.Instantiate(go, Vector3.zero, Quaternion.identity, transform);
 			pivotH.name = "CamRotationPivotH";
-			//pivotH.transform.localPosition = new Vector3(0, Height, 0);
+			pivotH.transform.localPosition = new Vector3(0, Height, 0);
 			
 			GameObject pivotV = GameObject.Instantiate(go, Vector3.zero, Quaternion.identity, pivotH.transform);
 			pivotV.name = "CamRotationPivotV";
