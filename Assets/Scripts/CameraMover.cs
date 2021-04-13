@@ -5,12 +5,6 @@ using UnityEngine;
 
 namespace ActionCamera
 {
-	/// <summary>
-	/// Switching FPS/TPS modes, aiming down sights mode, keeps camera at the position in front of character's head, etc.
-	/// </summary>
-	/// <code>
-	/// new CameraMover (CameraManager manager)
-	/// </code>
 	[Serializable]
 	public class CameraMover
 	{
@@ -18,6 +12,7 @@ namespace ActionCamera
 
 		Vector3 cameraLocalPosition;
 		Vector3 vDirectionFromCameraToPivot;
+
 		// Avoiding obstacles in 3rd person mode
 		float distanceToObstacles;
 		RaycastHit obstaclesHitInfo;
@@ -26,13 +21,13 @@ namespace ActionCamera
 		public float defaultHorizontalOffset = 0f;
 		public float maxDistanceFromCamera = 4f;
 		
-		public CameraMover(ActionCamera manager)
+		public CameraMover(ActionCamera ac)
 		{
-			actionCamera = manager;
+			actionCamera = ac;
 		}
 
 		/// <summary>
-		/// Updates camera prefered position (for FPS mode, 3rd person mode and for aiming down sights).
+		/// Updates camera prefered position (for FPS mode, 3rd person mode).
 		/// </summary>
 		public void UpdateCameraPosition()
 		{
@@ -60,7 +55,7 @@ namespace ActionCamera
 		}
 
 		///<summary>
-		/// Calculates the distance from the character's back to the closest obstacle on the scene (to move 3rd persson camera closer to the character if needed)
+		/// Calculates the distance from the character's back to the closest obstacle on the scene (to move 3rd person camera closer to the character if needed)
 		///</summary>
 		private void UpdateDistanceToObstacles(float distance)
 		{
