@@ -15,9 +15,9 @@ namespace ActionCamera
 		float currentAngularSpeedV;
 		float currentAngularSpeedH;
 
-		public CameraRotator(ActionCamera manager)
+		public CameraRotator(ActionCamera ac)
 		{
-			this.actionCamera = manager;
+			this.actionCamera = ac;
 		}
 
 		public void UpdateRotation(float inputMouseX, float inputMouseY)
