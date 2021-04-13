@@ -7,7 +7,7 @@ Also, the pivot transform around which the camera should rotate could be set via
 Designed for the camera construct that is made as following:
 
 1. `CamRotationPivotH`:  
- a gameObject is a child of the root game object (player or something else),
+ a gameObject that could be attached to the root game object (player or something else) or the player object could be set via `TargetToFollow`
  it rotates around it's Y axis only in World space.  
   
 2. `CamRotationPivotV`:  
